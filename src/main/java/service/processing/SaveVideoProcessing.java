@@ -1,24 +1,25 @@
-package controller;
+package service.processing;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicReference;
 
+import model.bean.SaveVideo;
 import model.bo.VideoBO;
+import utils.Pair;
 
 public class SaveVideoProcessing extends Thread {
 	// <<username, id>, progress>
 	public static Map<Pair<String,String>,AtomicReference<Double>> progressMap = new HashMap<>();
 
-	public static Queue<SaveVideoEntity> queue = new ConcurrentLinkedQueue<SaveVideoEntity>();
+	public static Queue<SaveVideo> queue = new ConcurrentLinkedQueue<SaveVideo>();
 
-	public static synchronized SaveVideoEntity getSaveVideoEntity() {
+	public static synchronized SaveVideo getSaveVideoEntity() {
 		if (queue.size() > 0)
 			return queue.poll();
 		else
@@ -28,7 +29,7 @@ public class SaveVideoProcessing extends Thread {
 	@Override
 	public void run() {
 		while (true) {
-			SaveVideoEntity sve = getSaveVideoEntity();
+			SaveVideo sve = getSaveVideoEntity();
 			if (sve != null) {
 				File uploadDir = new File(sve.uploadPath);
 				if (!uploadDir.exists())

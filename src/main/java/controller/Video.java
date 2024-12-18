@@ -3,17 +3,11 @@ package controller;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.servlet.RequestDispatcher;
@@ -25,7 +19,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
+import model.bean.SaveVideo;
 import model.bo.VideoBO;
+import service.processing.SaveVideoProcessing;
+import utils.Pair;
 
 @MultipartConfig(fileSizeThreshold = 1024 * 1024 * 10, // 10 MB - Bộ nhớ đệm khi tải file lớn
 		maxFileSize = 1024L * 1024 * 1024 * 2, // 2 GB (2 x 1024 x 1024 x 1024 bytes)
@@ -149,7 +146,7 @@ public class Video extends HttpServlet {
 				}
 
 				if (tmpInputStream != null && tmpSize != 0) {
-					SaveVideoEntity tmp = new SaveVideoEntity(id, username, name, uploadPath, tmpInputStream, tmpSize, filePart);
+					SaveVideo tmp = new SaveVideo(id, username, name, uploadPath, tmpInputStream, tmpSize);
 
 //				 	Xử lý ghi file trong background
 					SaveVideoProcessing.queue.add(tmp);
